@@ -31,11 +31,11 @@ function wrap(){
 
 	if (!error){
 		if(window.hive_keychain) {
-			window.hive_keychain.requestTransfer(hiveAccountFrom, "wrapped-hive-bsc", parseFloat(amount).toFixed(3), addressTo, "HIVE", () => {
+			window.hive_keychain.requestTransfer(hiveAccountFrom, "bnb-hive", parseFloat(amount).toFixed(3), addressTo, "HIVE", () => {
 				console.log('Request sent!', amount);
 			}, false);
 		} else {
-			alert("Send "+parseFloat(amount).toFixed(3)+" HIVE to @wrapped-hive-bsc with memo: " + addressTo)
+			alert("Send "+parseFloat(amount).toFixed(3)+" HIVE to @bnb-hive with memo: " + addressTo)
 		}
 	}
 }
