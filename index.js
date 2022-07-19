@@ -50,7 +50,7 @@ app.get('/hbd-polygon', async (req, res) => {
 })
 
 app.get('/hive-polygon', async (req, res) => {
-  res.render('hive-polygone/hive')
+  res.render('hive-polygon/hive')
 })
 
 app.get('/sps-polygon', async (req, res) => {

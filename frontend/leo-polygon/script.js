@@ -24,7 +24,7 @@ function wrap(){
 		error = true;
 	}
 	if (!web3.utils.isAddress(addressTo)){
-		alert("Invalid Ethereum address!");
+		alert("Invalid Polygon address!");
 		error = true;
 	}
 
@@ -35,7 +35,7 @@ function wrap(){
 				contractAction: 'transfer',
 				contractPayload: {
 					symbol: 'LEO',
-					to: 'wrapped-leo',
+					to: 'p-leo',
 					quantity: parseFloat(amount).toFixed(3),
 					memo: addressTo
 				}
@@ -45,7 +45,7 @@ function wrap(){
 				console.log(response);
 			})
 		} else {
-			alert("Send "+parseFloat(amount).toFixed(3)+" LEO to @wrapped-leo with memo: " + addressTo)
+			alert("Send "+parseFloat(amount).toFixed(3)+" LEO to @p-leo with memo: " + addressTo)
 		}
 	}
 }
@@ -57,7 +57,7 @@ async function unwrap(){
 	let amount = parseFloat(document.getElementById("polygon_amount").value * 1000).toFixed(0)
 
 	if (parseInt(ethereum.chainId, 16)  != 137 || ethereum.chainId != 137){
-		alert("Switch to Ethereum mainnet! Current chain ID: " + ethereum.chainId)
+		alert("Switch to Polygon mainnet! Current chain ID: " + ethereum.chainId)
 	}
 
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){
@@ -72,7 +72,7 @@ async function unwrap(){
 				to: contract, // Required except during contract publications.
 				from: address, // must match user's active address.
 				data: contractFunction, // Optional, but used for defining smart contract creation and interaction.
-				chainId: 1, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+				chainId: 137, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
 				gas: '0x30d40'
 			};
 
