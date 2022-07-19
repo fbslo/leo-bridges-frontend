@@ -53,7 +53,7 @@ async function unwrap(){
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){
   	if (response.length == 0) alert("invalid Hive username!")
 		else {
-			let contract = '0x000000000000'
+			let contract = '0x874966221020d6ac1aed0e2cfad9cbfee0ba713b'
 			let contractObject = new web3.eth.Contract(ABI, contract);
 			let contractFunction = await contractObject.methods['convertTokenWithTransfer'](amount, hiveAddressTo).encodeABI(); //multiply by 10**3 to remove decimal places
 
