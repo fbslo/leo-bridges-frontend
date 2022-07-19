@@ -31,11 +31,11 @@ function wrap(){
 
 	if (!error){
 		if(window.hive_keychain) {
-			window.hive_keychain.requestTransfer(hiveAccountFrom, "p-hbd", parseFloat(amount).toFixed(3), addressTo, "HBD", () => {
+			window.hive_keychain.requestTransfer(hiveAccountFrom, "b-hbd", parseFloat(amount).toFixed(3), addressTo, "HBD", () => {
 				console.log('Request sent!', amount);
 			}, false);
 		} else {
-			alert("Send "+parseFloat(amount).toFixed(3)+" HBD to @p-hbd with memo: " + addressTo)
+			alert("Send "+parseFloat(amount).toFixed(3)+" HBD to @b-hbd with memo: " + addressTo)
 		}
 	}
 }
