@@ -53,7 +53,7 @@ async function unwrap(){
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){
   	if (response.length == 0) alert("invalid Hive username!")
 		else {
-			let contract = '0x6d969cea201e427d2875724fd4e8044833fbc7f4'
+			let contract = '0x000000000000'
 			let contractObject = new web3.eth.Contract(ABI, contract);
 			let contractFunction = await contractObject.methods['convertTokenWithTransfer'](amount, hiveAddressTo).encodeABI(); //multiply by 10**3 to remove decimal places
 
@@ -62,7 +62,7 @@ async function unwrap(){
 				to: contract, // Required except during contract publications.
 				from: address, // must match user's active address.
 				data: contractFunction, // Optional, but used for defining smart contract creation and interaction.
-				chainId: 137, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+				chainId: 56, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
 				gas: '0x30d40'
 			};
 

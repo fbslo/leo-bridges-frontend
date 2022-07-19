@@ -48,6 +48,7 @@ async function unwrap(){
 
 	if (parseInt(ethereum.chainId, 16)  != 56 || ethereum.chainId != 56){
 		alert("Switch to BNB Smart Chain mainnet! Current chain ID: " + ethereum.chainId)
+		return;
 	}
 
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){
@@ -62,7 +63,7 @@ async function unwrap(){
 				to: contract, // Required except during contract publications.
 				from: address, // must match user's active address.
 				data: contractFunction, // Optional, but used for defining smart contract creation and interaction.
-				chainId: 137, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+				chainId: 56, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
 				gas: '0x30d40'
 			};
 

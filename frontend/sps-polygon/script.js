@@ -58,6 +58,7 @@ async function unwrap(){
 
 	if (parseInt(ethereum.chainId, 16)  != 137 || ethereum.chainId != 137){
 		alert("Switch to Polygon mainnet! Current chain ID: " + ethereum.chainId)
+		return
 	}
 
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){

@@ -58,6 +58,7 @@ async function unwrap(){
 
 	if (parseInt(ethereum.chainId, 16)  != 56 || ethereum.chainId != 56){
 		alert("Switch to BNB Smart Chain mainnet! Current chain ID: " + ethereum.chainId)
+		return;
 	}
 
 	hive.api.getAccounts([hiveAddressTo], async function(err, response){
