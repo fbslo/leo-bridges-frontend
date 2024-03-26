@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script src="./ABI.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@hiveio/hive-js/dist/hive.min.js"></script>
-    <title>Polygon LEO Bridge</title>
+    <title>Arbitrum LEO Bridge</title>
     <link rel="icon" href="./sps.png" sizes="any">
     <link rel="stylesheet" href="./style.css">
     <script src="./web3.js"></script>
@@ -14,21 +14,21 @@
   <div class="container" id="container">
   	<div class="form-container sign-in-container">
   		<form>
-  			<h1>Hive Engine to Polygon</h1>
+  			<h1>Hive Engine to Arbitrum</h1>
   			<div class="social-container"></div>
-  			<span>Transfer native LEO tokens to Polygon.</span>
-  			<input type="text" placeholder="Receiving Polygon address"  id='polygon_address'/>
+  			<span>Transfer native LEO tokens to Arbitrum.</span>
+  			<input type="text" placeholder="Receiving Arbitrum address"  id='arbitrum_address'/>
   			<input type="text" placeholder="Amount" id='hive_amount'/>
   			<button type="button" class='hive' onclick="wrap()">Transfer</button>
   		</form>
   	</div>
   	<div class="form-container sign-up-container">
   		<form>
-  			<h1>Polygon to Hive Engine</h1>
+  			<h1>Arbitrum to Hive Engine</h1>
         <div class="social-container"></div>
-  			<span>Transfer pLEO back to Hive Engine.</span>
+  			<span>Transfer arbLEO back to Hive Engine.</span>
   			<input type="text" placeholder="Hive username" id='hive_address'/>
-        <input type="text" placeholder="Amount" id='polygon_amount'/>
+        <input type="text" placeholder="Amount" id='arbitrum_amount'/>
         <div><button type="button" onclick="unwrap()">Transfer</button></div>
   		</form>
   		</form>
@@ -37,12 +37,12 @@
   		<div class="overlay">
   			<div class="overlay-panel overlay-left">
   				<h1>LEO Bridge</h1>
-          <p>Transfer pLEO tokens back to Hive Engine.<br><br><small>Bridge operated by <a href="https://leofinance.io" target="_blank">LeoFinance</a><br><sub>Fees: 0.5%</sub></small></p>
-  				<button class="ghost" id="to_polygon">Or to Polygon</button>
+          <p>Transfer arbLEO tokens back to Hive Engine.<br><br><small>Bridge operated by <a href="https://leofinance.io" target="_blank">LeoFinance</a><br><sub>Fees: 1.5%</sub></small></p>
+  				<button class="ghost" id="to_polygon">Or to Arbitrum</button>
   			</div>
   			<div class="overlay-panel overlay-right">
   				<h1>LEO Bridge</h1>
-  				<p>Transfer native LEO coins to Polygon.<br><br><small>Bridge operated by <a href="https://leofinance.io" target="_blank">LeoFinance</a><br><sub>Fees: 0.5%</sub></small></p>
+  				<p>Transfer native LEO coins to Arbitrum.<br><br><small>Bridge operated by <a href="https://leofinance.io" target="_blank">LeoFinance</a><br><sub>Fees: 1.5%</sub></small></p>
   				<button class="ghost" id="to_hive">Or transfer them back</button>
   			</div>
   		</div>
