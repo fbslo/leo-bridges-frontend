@@ -68,7 +68,6 @@ async function unwrap(){
 			let contractFunction = await contractObject.methods['convertTokenWithTransfer'](amount, hiveAddressTo).encodeABI(); //multiply by 10**3 to remove decimal places
 
 			const transactionParameters = {
-				nonce: '0x00', // ignored by MetaMask
 				to: contract, // Required except during contract publications.
 				from: address, // must match user's active address.
 				data: contractFunction, // Optional, but used for defining smart contract creation and interaction.
