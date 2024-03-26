@@ -72,7 +72,7 @@ async function unwrap(){
 				from: address, // must match user's active address.
 				data: contractFunction, // Optional, but used for defining smart contract creation and interaction.
 				chainId: 42161, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
-				gas: '0x30d40'
+				gas: '0x7a120'
 			};
 
 			const txHash = await ethereum.request({
