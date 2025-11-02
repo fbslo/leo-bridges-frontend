@@ -69,6 +69,10 @@ app.get('/leo-arbitrum', async (req, res) => {
   res.render('leo-arbitrum/leo')
 })
 
+app.get('/sleo', async (req, res) => {
+  res.render('sleo/migrate')
+})
+
 app.get("/wleo", (req, res) => { res.redirect(301, "/leo-ethereum") })
 app.get("/bleo", (req, res) => { res.redirect(301, "/leo-bsc") })
 app.get("/polygon", (req, res) => { res.redirect(301, "/leo-polygon") })

