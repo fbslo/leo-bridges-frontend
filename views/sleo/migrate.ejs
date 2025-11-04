@@ -218,6 +218,7 @@
             console.log(`amt`, amt)
           }
           const approve = await token.approve(CONFIG.newStaking, amt);
+          await approve.wait();
           const tx = await newStaking.stake(amt);
           await tx.wait();
           status('Stake complete');
