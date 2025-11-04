@@ -90,6 +90,7 @@
       <button class="btn" id="btnApprove" disabled>1) Approve Contract</button>
       <button class="btn" id="btnClaim" disabled>2) Claim Rewards</button>
       <button class="btn" id="btnUnstake" disabled>3) Unstake</button>
+      <button class="btn" id="btnStake" disabled>4) Stake to new contract</button>
 
       <div class="readonly" id="status">Status: Not connected</div>
       <button class="btn" id="connect">Connect Wallet</button>
@@ -100,12 +101,15 @@
         chainIdHex: '0xa4b1', // Arbitrum One
         usdc: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
         rescue: '0xaA54cEE1e82A4Aa717C0DBa76e3Ff7A50AB2986d',
-        staking: '0x57D56a3E8056Ea557Df1c369759993BB1d4cab99'
+        staking: '0x57D56a3E8056Ea557Df1c369759993BB1d4cab99',
+        newStaking: '0xAb3657d48D4BcaaA4Bb3cd24A3d0DFCCD70EDe5C',
+        token: '0x93864d81175095DD93360FFA2A529b8642F76A6E'
       };
 
       const ERC20_ABI = [
         'function approve(address spender, uint256 amount) external returns (bool)',
-        'function allowance(address owner, address spender) external view returns (uint256)'
+        'function allowance(address owner, address spender) external view returns (uint256)',
+        'function balanceOf(address user) external view returns (uint256)'
       ];
 
       const RESCUE_ABI = [
@@ -117,7 +121,7 @@
         'function balanceOf(address user) external view returns (uint256)'
       ];
 
-      let provider, signer, usdc, rescue, staking, address;
+      let provider, signer, usdc, rescue, staking, address, amt, token, newStaking;
 
       const $ = id => document.getElementById(id);
       const status = msg => $('status').textContent = 'Status: ' + msg;
@@ -159,9 +163,11 @@
         usdc = new ethers.Contract(CONFIG.usdc, ERC20_ABI, signer);
         rescue = new ethers.Contract(CONFIG.rescue, RESCUE_ABI, signer);
         staking = new ethers.Contract(CONFIG.staking, STAKING_ABI, signer);
+        token = new ethers.Contract(CONFIG.token, ERC20_ABI, signer);
+        newStaking = new ethers.Contract(CONFIG.newStaking, STAKING_ABI, signer);
 
         status('Connected: ' + address.slice(0, 6) + '...' + address.slice(-4));
-        ['btnApprove','btnClaim','btnUnstake'].forEach(id => $(id).disabled = false);
+        ['btnApprove','btnClaim','btnUnstake', 'btnStake'].forEach(id => $(id).disabled = false);
       }
 
       async function doApprove() {
@@ -185,19 +191,37 @@
           await tx.wait();
           status('Rewards claimed');
         } catch(e) {
+          console.log(`claimError`, e)
           status('Claim failed');
         }
       }
 
       async function doUnstake() {
         try {
-          const amt = await staking.balanceOf(address);
+          amt = await staking.balanceOf(address);
           status('Unstaking...');
           const tx = await staking.unstake(amt);
           await tx.wait();
           status('Unstake complete');
         } catch(e) {
+          console.log(`unstakeError`, e)
           status('Unstake failed');
+        }
+      }
+
+      async function doStake() {
+        try {
+          status('Staking...');
+          if (!amt){
+            amt = await token.balanceOf(address);
+          }
+          const approve = await token.approve(CONFIG.newStaking, amt);
+          const tx = await newStaking.stake(amt);
+          await tx.wait();
+          status('Stake complete');
+        } catch(e) {
+          console.log(`stakeError`, e)
+          status('Stake failed');
         }
       }
 
@@ -205,6 +229,7 @@
       $('btnApprove').onclick = doApprove;
       $('btnClaim').onclick = doClaim;
       $('btnUnstake').onclick = doUnstake;
+      $('btnStake').onclick = doStake;
     </script>
   </body>
 </html>
