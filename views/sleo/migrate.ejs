@@ -215,6 +215,7 @@
           status('Staking...');
           if (!amt){
             amt = await token.balanceOf(address);
+            console.log(`amt`, amt)
           }
           const approve = await token.approve(CONFIG.newStaking, amt);
           const tx = await newStaking.stake(amt);
