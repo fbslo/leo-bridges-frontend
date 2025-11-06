@@ -116,7 +116,7 @@
         'function claim() external'
       ];
       const STAKING_ABI = [
-        'function unstake(uint256 amount) external',
+        'function withdraw(uint256 amount) external',
         'function stake(uint256 amount) external',
         'function earned(address user) external view returns (uint256)',
         'function balanceOf(address user) external view returns (uint256)'
@@ -201,7 +201,7 @@
         try {
           amt = await staking.balanceOf(address);
           status('Unstaking...');
-          const tx = await staking.unstake(amt);
+          const tx = await staking.withdraw(amt);
           await tx.wait();
           status('Unstake complete');
         } catch(e) {
